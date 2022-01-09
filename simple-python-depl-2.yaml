@@ -1,0 +1,40 @@
+# deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fast-asr-deploy
+  labels:
+    type: restapi
+spec:
+  selector: 
+    matchLabels:
+      app: fast-asr
+  replicas: 1
+  template:
+    metadata:
+      name: fast-asr-tmpl
+      labels:
+        app: fast-asr
+    spec:
+      containers:
+        - name: fast-asr
+          image: mycluster-registry:38791/fast-asr:latest
+          ports:
+            - containerPort: 9001
+
+---
+# service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fast-asr-svc
+spec:
+  selector:
+    app: fast-asr
+  ports:
+    - protocol: "TCP"
+      port: 9000
+      targetPort: 9001
+      

@@ -1,0 +1,50 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroutebar
+
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: PathPrefix(`/test`)
+    kind: Rule
+    services:
+    - name: simple-fast-api-svc
+      port: 8000
+    middlewares:
+    - name: testprefix
+      namespace: lee1jun
+
+  - match: PathPrefix(`/asr`)
+    kind: Rule
+    services:
+    - name: fast-asr-svc
+      port: 9000
+    middlewares:
+    - name: stripprefix
+      namespace: lee1jun
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: stripprefix
+  namespace: lee1jun
+
+spec:
+  stripPrefix:
+    prefixes:
+      - /asr
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: testprefix
+  namespace: lee1jun
+
+spec:
+  stripPrefix:
+    prefixes:
+      - /test

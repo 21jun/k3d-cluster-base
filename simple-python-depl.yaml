@@ -1,0 +1,40 @@
+# deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-fast-api-deploy
+  labels:
+    type: restapi
+spec:
+  selector: 
+    matchLabels:
+      app: simple-fast-api
+  replicas: 1
+  template:
+    metadata:
+      name: simple-fast-api-tmpl
+      labels:
+        app: simple-fast-api
+    spec:
+      containers:
+        - name: simple-fast-api
+          image: 21jun/simple-fast-api:test4
+          ports:
+            - containerPort: 5000
+
+---
+# service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-fast-api-svc
+spec:
+  selector:
+    app: simple-fast-api
+  ports:
+    - protocol: "TCP"
+      port: 8000
+      targetPort: 5000
+      
